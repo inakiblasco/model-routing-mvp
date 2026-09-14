@@ -1,0 +1,47 @@
+{
+  "benchmark_path": "benchmarks/synthetic_tasks.jsonl",
+  "output_dir": "outputs",
+  "redact_model_responses": false,
+  "models": [
+    {
+      "key": "fast",
+      "adapter": "synthetic",
+      "provider": "local-synthetic",
+      "model_name": "fast-sim",
+      "capabilities": ["simple"],
+      "latency_ms": 200,
+      "input_cost_per_1k": 0.0001,
+      "output_cost_per_1k": 0.0002
+    },
+    {
+      "key": "coding",
+      "adapter": "synthetic",
+      "provider": "local-synthetic",
+      "model_name": "coding-sim",
+      "capabilities": ["simple", "coding"],
+      "latency_ms": 800,
+      "input_cost_per_1k": 0.001,
+      "output_cost_per_1k": 0.002
+    },
+    {
+      "key": "strong",
+      "adapter": "synthetic",
+      "provider": "local-synthetic",
+      "model_name": "strong-sim",
+      "capabilities": ["simple", "coding", "reasoning"],
+      "latency_ms": 1800,
+      "input_cost_per_1k": 0.005,
+      "output_cost_per_1k": 0.01
+    }
+  ],
+  "baselines": {
+    "fast": "fast",
+    "strong": "strong"
+  },
+  "routes": {
+    "simple": "fast",
+    "coding": "coding",
+    "reasoning": "strong"
+  }
+}
+

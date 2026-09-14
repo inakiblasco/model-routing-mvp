@@ -1,0 +1,7 @@
+{"task_id":"simple_math","prompt":"What is 2 + 2? Reply with only the answer.","expected_category":"simple","evaluator":{"type":"exact","value":"4"}}
+{"task_id":"simple_fact","prompt":"What is the capital of France? Reply with only the city.","expected_category":"simple","evaluator":{"type":"contains","value":"Paris"}}
+{"task_id":"coding_add","prompt":"Write a Python function named add that returns the sum of two numbers.","expected_category":"coding","evaluator":{"type":"contains","value":"def add"}}
+{"task_id":"coding_reverse","prompt":"Write a Python function named reverse_text that reverses a string.","expected_category":"coding","evaluator":{"type":"contains","value":"def reverse_text"}}
+{"task_id":"reasoning_apples","prompt":"Reason carefully: Alice has 3 apples and buys 2 more. How many apples does Alice have now?","expected_category":"reasoning","evaluator":{"type":"contains","value":"5"}}
+{"task_id":"reasoning_logic","prompt":"Logic puzzle: If all bloops are razzes and Sally is a bloop, what can we conclude about Sally?","expected_category":"reasoning","evaluator":{"type":"contains","value":"Sally is a razz"}}
+

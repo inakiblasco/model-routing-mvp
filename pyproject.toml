@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "model-routing-mvp"
+version = "0.1.0"
+description = "Minimal framework for evaluating task-based LLM routing policies."
+requires-python = ">=3.12"
+readme = "README.md"
+dependencies = []
+
+
+[project.scripts]
+model-routing-mvp = "model_routing_mvp.cli:main"
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
