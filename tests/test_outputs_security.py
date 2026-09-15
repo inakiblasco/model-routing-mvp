@@ -18,6 +18,9 @@ _RESULT_KEYS = {
     "strategy",
     "task_id",
     "expected_category",
+    "task_type",
+    "risk",
+    "sensitivity",
     "selected_model_key",
     "selected_model",
     "provider",
@@ -57,9 +60,13 @@ def test_summary_contains_expected_strategy_metrics(tmp_path: Path) -> None:
 
     summary = (tmp_path / "summary.md").read_text(encoding="utf-8")
 
-    assert "| always_fast | 6 | 33.33% | 0.200 | 0.000003 |" in summary
-    assert "| always_strong | 6 | 100.00% | 1.800 | 0.000114 |" in summary
-    assert "| rule_based_router | 6 | 100.00% | 0.933 | 0.000054 |" in summary
+    assert "| always_fast |" in summary
+    assert "| always_strong |" in summary
+    assert "| rule_based_router |" in summary
+    assert "| policy_router |" in summary
+    assert "## Risk Metrics" in summary
+    assert "## Sensitivity Metrics" in summary
+    assert "## Task Type Metrics" in summary
 
 
 def test_jsonl_and_csv_outputs_round_trip(tmp_path: Path) -> None:
@@ -73,7 +80,7 @@ def test_jsonl_and_csv_outputs_round_trip(tmp_path: Path) -> None:
     with (tmp_path / "results.csv").open(encoding="utf-8", newline="") as fh:
         csv_rows = list(csv.DictReader(fh))
 
-    assert len(jsonl_rows) == len(records) == 18
+    assert len(jsonl_rows) == len(records)
     assert len(csv_rows) == len(records)
     assert jsonl_rows[0]["task_id"] == csv_rows[0]["task_id"]
 

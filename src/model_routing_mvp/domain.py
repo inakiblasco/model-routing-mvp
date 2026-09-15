@@ -13,6 +13,9 @@ class Task:
     prompt: str
     expected_category: str
     evaluator: EvaluatorSpec | None = None
+    task_type: str = ""
+    risk: str = "low"
+    sensitivity: str = "public"
 
 
 @dataclass(frozen=True)
@@ -69,4 +72,3 @@ class Router(Protocol):
         self, task: Task, models: dict[str, ModelAdapter]
     ) -> RouteDecision:
         ...
-

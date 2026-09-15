@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import time
 import urllib.error
 import urllib.request
@@ -26,15 +27,38 @@ def _cost(
 
 def _infer_category(prompt: str) -> str:
     text = prompt.lower()
-    if any(word in text for word in ("python", "function", "code", "bug")):
+    if any(word in text for word in ("python", "function", "code", "bug", "sql")):
         return "coding"
-    if any(word in text for word in ("reason", "logic", "conclude", "therefore")):
+    if any(
+        word in text
+        for word in (
+            "architecture",
+            "confidential",
+            "incident",
+            "legal",
+            "logic",
+            "conclude",
+            "therefore",
+            "reason",
+            "risk",
+            "security",
+            "tradeoff",
+        )
+    ):
         return "reasoning"
     return "simple"
 
 
 def _synthetic_answer(prompt: str) -> str:
     text = prompt.lower()
+    exact = re.search(r"reply with exactly:\s*([^\n.]+)", prompt, flags=re.IGNORECASE)
+    if exact:
+        return exact.group(1).strip().strip('"`')
+    function_name = re.search(r"function named\s+([a-zA-Z_][a-zA-Z0-9_]*)", prompt)
+    if function_name:
+        return f"def {function_name.group(1)}(*args):\n    return None"
+    if "sql" in text:
+        return "SELECT * FROM table WHERE active = true;"
     if "2 + 2" in text or "2+2" in text:
         return "4"
     if "capital of france" in text:
@@ -173,4 +197,3 @@ def _extract_usage(payload: dict[str, Any], prompt: str, response: str) -> Token
         or estimate_tokens(response)
     )
     return TokenUsage(input_tokens=input_tokens, output_tokens=output_tokens)
-

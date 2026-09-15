@@ -1,5 +1,8 @@
 # Model Routing MVP Brief
 
+This brief describes Phase 0. Phase 1 planning and implementation notes live in
+`PHASE_1_PROPOSAL.md`.
+
 ## What This Is
 
 This MVP is a small evaluation framework for testing whether different LLM tasks can be routed to different models while preserving answer quality and reducing cost or latency.

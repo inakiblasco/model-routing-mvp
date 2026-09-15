@@ -1,0 +1,54 @@
+{
+  "benchmark_path": "benchmarks/phase1_tasks.jsonl",
+  "output_dir": "outputs/openai-phase1",
+  "redact_model_responses": false,
+  "models": [
+    {
+      "key": "fast",
+      "adapter": "openai_compatible_http",
+      "provider": "openai",
+      "model_name": "gpt-5-nano",
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "api_key_env": "OPENAI_API_KEY",
+      "input_cost_per_1k": 0.00005,
+      "output_cost_per_1k": 0.0004,
+      "timeout_s": 60
+    },
+    {
+      "key": "coding",
+      "adapter": "openai_compatible_http",
+      "provider": "openai",
+      "model_name": "gpt-5-mini",
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "api_key_env": "OPENAI_API_KEY",
+      "input_cost_per_1k": 0.00025,
+      "output_cost_per_1k": 0.002,
+      "timeout_s": 60
+    },
+    {
+      "key": "strong",
+      "adapter": "openai_compatible_http",
+      "provider": "openai",
+      "model_name": "gpt-5",
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "api_key_env": "OPENAI_API_KEY",
+      "input_cost_per_1k": 0.00125,
+      "output_cost_per_1k": 0.01,
+      "timeout_s": 90
+    }
+  ],
+  "baselines": {
+    "fast": "fast",
+    "strong": "strong"
+  },
+  "routes": {
+    "simple": "fast",
+    "coding": "coding",
+    "reasoning": "strong"
+  },
+  "policy": {
+    "fast": "fast",
+    "standard": "coding",
+    "strong": "strong"
+  }
+}

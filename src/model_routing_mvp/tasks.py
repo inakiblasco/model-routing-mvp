@@ -31,6 +31,9 @@ def load_tasks(path: Path) -> list[Task]:
                 task_id=str(data["task_id"]),
                 prompt=str(data["prompt"]),
                 expected_category=str(data["expected_category"]),
+                task_type=str(data.get("task_type") or data["expected_category"]),
+                risk=str(data.get("risk", "low")),
+                sensitivity=str(data.get("sensitivity", "public")),
                 evaluator=data.get("evaluator"),
             )
         )

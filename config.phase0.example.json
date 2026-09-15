@@ -1,5 +1,5 @@
 {
-  "benchmark_path": "benchmarks/phase1_tasks.jsonl",
+  "benchmark_path": "benchmarks/synthetic_tasks.jsonl",
   "output_dir": "outputs",
   "redact_model_responses": false,
   "models": [

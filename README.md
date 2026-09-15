@@ -1,7 +1,7 @@
 # model-routing-mvp
 
-Minimal Python framework for evaluating task-based routing across LLM
-models/providers.
+Minimal Python framework for evaluating task-based and policy-based routing
+across LLM models/providers.
 
 Core research question: can a simple routing policy match the quality of always
 using the strongest model while reducing cost and/or latency?
@@ -14,14 +14,15 @@ This is a research prototype, not production software.
 - `ModelAdapter`: common `generate(prompt)` interface returning response, latency,
   token usage, and estimated cost.
 - `Router`: common route interface returning the selected model and reason.
-- Baselines: `always_fast`, `always_strong`, `rule_based_router`.
+- Baselines: `always_fast`, `always_strong`, `rule_based_router`,
+  `policy_router`.
 - Evaluators: `exact`, `contains`, and `regex`.
 - Outputs: `results.jsonl`, `results.csv`, and `summary.md`.
 
-The default config uses deterministic synthetic models so experiments run
-offline and are repeatable. A small OpenAI-compatible HTTP adapter is included
-for configurable external endpoints, but no external service is installed or
-called unless you put that adapter in your config.
+The default Phase 1 config uses deterministic synthetic models so experiments
+run offline and are repeatable. A small OpenAI-compatible HTTP adapter is
+included for configurable external endpoints, but no external service is called
+unless you run an API-backed config.
 
 ## Setup
 
@@ -39,6 +40,19 @@ uv run python -m model_routing_mvp --config config.example.json
 ```
 
 Outputs are written to `outputs/` by default.
+
+For the preserved Phase 0 benchmark:
+
+```powershell
+uv run python -m model_routing_mvp --config config.phase0.example.json
+```
+
+For the Phase 1 OpenAI API config:
+
+```powershell
+$env:OPENAI_API_KEY = "..."
+uv run python -m model_routing_mvp --config config.phase1.openai.example.json
+```
 
 ## Test
 
@@ -99,4 +113,3 @@ Credentials are read from environment variables and are never logged. Keep
 - No telemetry is included.
 - External endpoints are configurable and never called by the default synthetic
   setup.
-

@@ -8,7 +8,7 @@ from typing import Any
 
 from .adapters import OpenAICompatibleHTTPAdapter, SyntheticModelAdapter
 from .domain import ModelAdapter
-from .routers import AlwaysRouter, RuleBasedRouter
+from .routers import AlwaysRouter, PolicyRouter, RuleBasedRouter
 
 
 @dataclass(frozen=True)
@@ -35,6 +35,7 @@ class AppConfig:
     models: tuple[ModelConfig, ...]
     baselines: dict[str, str]
     routes: dict[str, str]
+    policy: dict[str, str]
 
 
 def load_config(path: Path) -> AppConfig:
@@ -56,6 +57,7 @@ def load_config(path: Path) -> AppConfig:
         models=tuple(_model_config(item) for item in data["models"]),
         baselines=dict(data["baselines"]),
         routes=dict(data["routes"]),
+        policy=dict(data.get("policy", {})),
     )
 
 
@@ -91,7 +93,9 @@ def build_models(config: AppConfig) -> dict[str, ModelAdapter]:
     return models
 
 
-def build_routers(config: AppConfig) -> tuple[AlwaysRouter | RuleBasedRouter, ...]:
+def build_routers(
+    config: AppConfig,
+) -> tuple[AlwaysRouter | RuleBasedRouter | PolicyRouter, ...]:
     return (
         AlwaysRouter("always_fast", config.baselines["fast"]),
         AlwaysRouter("always_strong", config.baselines["strong"]),
@@ -99,6 +103,14 @@ def build_routers(config: AppConfig) -> tuple[AlwaysRouter | RuleBasedRouter, ..
             "rule_based_router",
             routes=config.routes,
             fallback_model_key=config.baselines["strong"],
+        ),
+        PolicyRouter(
+            "policy_router",
+            fast_model_key=config.policy.get("fast", config.baselines["fast"]),
+            standard_model_key=config.policy.get(
+                "standard", config.routes.get("coding", config.baselines["strong"])
+            ),
+            strong_model_key=config.policy.get("strong", config.baselines["strong"]),
         ),
     )
 

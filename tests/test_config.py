@@ -77,6 +77,7 @@ def test_build_models_supports_synthetic_and_endpoint_env(
     ]
     data["baselines"] = {"fast": "fast", "strong": "strong"}
     data["routes"] = {"simple": "fast", "coding": "strong", "reasoning": "strong"}
+    data["policy"] = {"fast": "fast", "standard": "strong", "strong": "strong"}
     monkeypatch.setenv("REMOTE_ENDPOINT", "https://example.invalid/chat")
 
     models = build_models(load_config(_write_config(tmp_path, data)))
@@ -105,4 +106,5 @@ def test_build_routers_exposes_required_baselines(tmp_path: Path) -> None:
         "always_fast",
         "always_strong",
         "rule_based_router",
+        "policy_router",
     ]

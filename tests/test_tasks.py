@@ -19,6 +19,26 @@ def test_load_tasks_skips_blank_lines(tmp_path: Path) -> None:
     assert len(tasks) == 1
     assert tasks[0].task_id == "t1"
     assert tasks[0].evaluator is None
+    assert tasks[0].task_type == "simple"
+    assert tasks[0].risk == "low"
+    assert tasks[0].sensitivity == "public"
+
+
+def test_load_tasks_supports_phase1_labels(tmp_path: Path) -> None:
+    path = tmp_path / "tasks.jsonl"
+    path.write_text(
+        (
+            '{"task_id":"t1","prompt":"Prompt","expected_category":"simple",'
+            '"task_type":"admin","risk":"high","sensitivity":"confidential"}\n'
+        ),
+        encoding="utf-8",
+    )
+
+    task = load_tasks(path)[0]
+
+    assert task.task_type == "admin"
+    assert task.risk == "high"
+    assert task.sensitivity == "confidential"
 
 
 def test_load_tasks_rejects_empty_benchmark(tmp_path: Path) -> None:

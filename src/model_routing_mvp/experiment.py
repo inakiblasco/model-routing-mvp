@@ -86,6 +86,9 @@ def _record(
         "strategy": decision.strategy,
         "task_id": task.task_id,
         "expected_category": task.expected_category,
+        "task_type": task.task_type or task.expected_category,
+        "risk": task.risk,
+        "sensitivity": task.sensitivity,
         "selected_model_key": decision.model_key,
         "selected_model": model_name,
         "provider": provider,
@@ -152,5 +155,32 @@ def _summary(records: list[dict[str, Any]]) -> str:
         distribution = Counter(str(item["selected_model"]) for item in items)
         for model_name, count in sorted(distribution.items()):
             lines.append(f"| {strategy} | {model_name} | {count} |")
+
+    for field, title in (
+        ("risk", "Risk Metrics"),
+        ("sensitivity", "Sensitivity Metrics"),
+        ("task_type", "Task Type Metrics"),
+    ):
+        lines += [
+            "",
+            f"## {title}",
+            "",
+            f"| Strategy | {field.replace('_', ' ').title()} | Tasks | Success Rate | Avg Cost (USD) |",
+            "| --- | --- | ---: | ---: | ---: |",
+        ]
+        for strategy, items in sorted(by_strategy.items()):
+            by_field: dict[str, list[dict[str, Any]]] = defaultdict(list)
+            for item in items:
+                by_field[str(item[field])].append(item)
+            for value, grouped in sorted(by_field.items()):
+                total = len(grouped)
+                successes = sum(1 for item in grouped if item["evaluation_passed"])
+                avg_cost = (
+                    sum(float(item["estimated_cost_usd"]) for item in grouped) / total
+                )
+                lines.append(
+                    f"| {strategy} | {value} | {total} | "
+                    f"{successes / total:.2%} | {avg_cost:.6f} |"
+                )
 
     return "\n".join(lines) + "\n"

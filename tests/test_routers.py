@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 
 from model_routing_mvp.domain import Task
-from model_routing_mvp.routers import AlwaysRouter, RuleBasedRouter
+from model_routing_mvp.routers import AlwaysRouter, PolicyRouter, RuleBasedRouter
 
 
 _MODELS = {"fast": object(), "coding": object(), "strong": object()}
@@ -39,6 +39,34 @@ def test_rule_based_router_uses_fallback_for_unknown_category() -> None:
     decision = router.route(Task("t1", "prompt", "unknown"), _MODELS)  # type: ignore[arg-type]
 
     assert decision.model_key == "strong"
+
+
+def test_policy_router_escalates_confidential_high_risk_tasks() -> None:
+    router = PolicyRouter("policy_router", "fast", "coding", "strong")
+    task = Task(
+        "t1",
+        "prompt",
+        "simple",
+        task_type="admin",
+        risk="high",
+        sensitivity="confidential",
+    )
+
+    decision = router.route(task, _MODELS)  # type: ignore[arg-type]
+
+    assert decision.model_key == "strong"
+    assert "risk=high" in decision.reason
+
+
+def test_policy_router_uses_standard_model_for_coding_tasks() -> None:
+    router = PolicyRouter("policy_router", "fast", "coding", "strong")
+
+    decision = router.route(
+        Task("t1", "prompt", "coding", task_type="coding"),
+        _MODELS,  # type: ignore[arg-type]
+    )
+
+    assert decision.model_key == "coding"
 
 
 def test_router_fails_fast_when_selected_model_is_missing() -> None:
